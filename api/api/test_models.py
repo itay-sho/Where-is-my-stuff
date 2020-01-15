@@ -77,6 +77,33 @@ class LocationTestCase(TestCase):
     def create_location(name, person, description=''):
         return Location.objects.create(name=name, person_id=person.id, description=description)
 
+    def setUp(self):
+        self.person, _ = PersonTestCase.create_person('random_user')
+        self.location = LocationTestCase.create_location(
+            name='my crib :-)',
+            person=self.person,
+            description='my awesome crib'
+        )
+
+    def test_removing_person__locations_removed(self):
+        pass
+
+    def test_removing_location_with_no_items__success(self):
+        assert len(Item.objects.filter(current_location_id=self.location.id)) == 0
+        assert Location.objects.filter(id=self.location.id).delete()
+
+    def test_removing_location_with_items__failure(self):
+        ItemTestCase.create_item('an item', person=self.person, current_location=self.location)
+        assert len(Item.objects.filter(current_location_id=self.location.id)) == 1
+
+        # shouldn't work because there are some items realted to this location
+        with self.assertRaises(django.db.models.deletion.ProtectedError):
+            Location.objects.filter(id=self.location.id).delete()
+
+        # when attempting to remove directly from Person it should work
+        assert Person.objects.filter(id=self.person.id).delete()
+
+
 
 class EventTestCase(TestCase):
     pass
