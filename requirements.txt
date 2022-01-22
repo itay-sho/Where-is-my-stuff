@@ -2,7 +2,7 @@ asgiref==3.2.3
 backcall==0.1.0
 colorama==0.4.3
 decorator==4.4.1
-Django==3.1.13
+Django==3.1.14
 djangorestframework==3.11.2
 ipython==7.16.3
 ipython-genutils==0.2.0
